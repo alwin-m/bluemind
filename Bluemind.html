@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlueMind - Life Timer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 384px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding-top: 2rem;
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(to right, #2563eb, #4f46e5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.025em;
+        }
+
+        .subtitle {
+            color: #4b5563;
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .quote {
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-style: italic;
+            transition: all 0.5s ease;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .input-section {
+            text-align: center;
+        }
+
+        .emoji-large {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .input-desc {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.125rem;
+            border: 2px solid #f3f4f6;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-field:focus {
+            border-color: #3b82f6;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #000;
+            color: white;
+            padding: 1rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            font-size: 1.125rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: #374151;
+        }
+
+        .submit-btn:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+        }
+
+        .developer-credit {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        .developer-credit .name {
+            font-weight: 600;
+            color: #2563eb;
+        }
+
+        .birthday-alert {
+            background: linear-gradient(to right, #fef3c7, #fed7aa);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40%, 43% {
+                transform: translateY(-30px);
+            }
+            70% {
+                transform: translateY(-15px);
+            }
+            90% {
+                transform: translateY(-4px);
+            }
+        }
+
+        .greeting-card .emoji-medium {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .greeting-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .greeting-desc {
+            font-size: 0.875rem;
+            color: #4b5563;
+        }
+
+        .progress-card {
+            text-align: center;
+        }
+
+        .progress-emoji {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-percentage {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .life-phase {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            height: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar {
+            background: linear-gradient(to right, #3b82f6, #8b5cf6);
+            height: 0.75rem;
+            border-radius: 9999px;
+            transition: width 1s ease;
+        }
+
+        .weeks-remaining {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #dc2626;
+        }
+
+        .weeks-subtitle {
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        .life-grid {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .grid-title {
+            text-align: center;
+            font-size: 1.125rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .grid-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .grid-row {
+            display: flex;
+            gap: 2px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .week-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .week-dot.past {
+            background: #1f2937;
+        }
+
+        .week-dot.current {
+            background: #dc2626;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+        }
+
+        .week-dot.future {
+            background: #e5e7eb;
+        }
+
+        .week-dot.future:hover {
+            background: #d1d5db;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .grid-legend {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            font-size: 0.75rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .legend-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-emoji {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-title {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .stat-subtitle {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            margin-top: 0.25rem;
+        }
+
+        .color-red { color: #dc2626; }
+        .color-blue { color: #2563eb; }
+        .color-green { color: #16a34a; }
+        .color-yellow { color: #ca8a04; }
+        .color-purple { color: #7c3aed; }
+        .color-pink { color: #db2777; }
+        .color-orange { color: #ea580c; }
+
+        .reality-check {
+            background: linear-gradient(to right, #fed7aa, #fecaca);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .motivation-card {
+            background: #000;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            color: white;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .motivation-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .motivation-text {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .motivation-subtitle {
+            font-size: 0.75rem;
+            opacity: 0.75;
+            margin-top: 0.5rem;
+        }
+
+        .reset-btn {
+            width: 100%;
+            background: white;
+            color: #1f2937;
+            padding: 1rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .reset-btn:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Step 1: Input Form -->
+        <div id="inputStep" class="fade-in">
+            <div class="header">
+                <h1 class="title">BLUEMIND</h1>
+                <p class="subtitle">Life Timer</p>
+                <p class="quote" id="rotatingQuote">Your life is happening NOW ⚡</p>
+            </div>
+            
+            <div class="card">
+                <div class="input-section">
+                    <div class="emoji-large">🎂</div>
+                    <h2 class="input-title">When did your story begin?</h2>
+                    <p class="input-desc">Let's see what you've accomplished</p>
+                    
+                    <input type="text" class="input-field" id="userName" placeholder="Your name" required>
+                    <input type="date" class="input-field" id="birthdate" required>
+                    
+                    <button class="submit-btn" id="submitBtn" onclick="calculateLifeStats()">
+                        Show My Life Stats ✨
+                    </button>
+
+                    <div class="developer-credit">
+                        <p>Developed by <span class="name">Alwin Madhu</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Results -->
+        <div id="resultsStep" class="hidden">
+            <!-- Header -->
+            <div class="header">
+                <h1 class="title">BLUEMIND</h1>
+                <p class="quote" id="resultsQuote">Your life is happening NOW ⚡</p>
+            </div>
+
+            <!-- Birthday Alert -->
+            <div id="birthdayAlert" class="birthday-alert hidden">
+                <div class="emoji-large">🎉</div>
+                <h2 class="greeting-title" id="birthdayMessage">🎉 HAPPY BIRTHDAY! Another year of amazing memories! 🎂</h2>
+                <p class="greeting-desc" id="birthdayDesc">Today marks another amazing year of your journey! 🌟</p>
+            </div>
+
+            <!-- Personalized Greeting -->
+            <div class="card greeting-card">
+                <div style="text-align: center;">
+                    <div class="emoji-medium">👋</div>
+                    <h2 class="greeting-title" id="greetingTitle">Hello!</h2>
+                    <p class="greeting-desc">Here's your life journey so far...</p>
+                </div>
+            </div>
+
+            <!-- Life Progress -->
+            <div class="card progress-card">
+                <div class="progress-emoji">⏳</div>
+                <div class="progress-percentage" id="progressPercentage">0% Complete</div>
+                <div class="life-phase" id="lifePhase">🌱 Growing</div>
+                
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                </div>
+                
+                <div class="weeks-remaining" id="weeksRemaining">0 weeks left</div>
+                <div class="weeks-subtitle">Make them count! 🔥</div>
+            </div>
+
+            <!-- Life Grid -->
+            <div class="life-grid">
+                <h3 class="grid-title">Your Life in Weeks</h3>
+                <div class="grid-container" id="lifeGrid"></div>
+                <div class="grid-legend">
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: #1f2937;"></div>
+                        <span>Lived</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: #dc2626;"></div>
+                        <span>Now</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: #e5e7eb;"></div>
+                        <span>Future</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fun Stats Grid -->
+            <div class="stats-grid" id="statsGrid"></div>
+
+            <!-- Reality Check -->
+            <div class="reality-check">
+                <div class="emoji-medium">⚡</div>
+                <h3 class="greeting-title">Wake Up Call</h3>
+                <p class="greeting-desc" id="realityText">
+                    You've spent <span class="color-red" style="font-weight: 700;" id="phoneHours">0</span> hours on devices
+                </p>
+                <p class="weeks-subtitle">That's enough time to learn 3 new languages! 📚</p>
+            </div>
+
+            <!-- Motivation -->
+            <div class="motivation-card">
+                <div class="emoji-medium">🎯</div>
+                <h3 class="motivation-title" id="motivationTitle">Your Mission</h3>
+                <p class="motivation-text" id="motivationText">
+                    Every day is a gift. Every moment is a choice.
+                    What will you do with your remaining weeks?
+                </p>
+                <p class="motivation-subtitle">Time for your second life begins now! 🚀</p>
+            </div>
+
+            <!-- Reset Button -->
+            <button class="reset-btn" onclick="resetApp()">Start Over 🔄</button>
+
+            <!-- Developer Credit -->
+            <div class="developer-credit" style="margin-bottom: 2rem;">
+                <p>Developed by <span class="name">Alwin Madhu</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentQuoteIndex = 0;
+        let quoteInterval;
+        
+        const lifeQuotes = [
+            "Your life is happening NOW ⚡",
+            "Every second counts 🔥",
+            "Time is your only real currency 💎",
+            "Make it meaningful ✨",
+            "Life is short. Make it sweet 🍯"
+        ];
+
+        const birthdayMessages = [
+            "🎉 HAPPY BIRTHDAY! Another year of amazing memories! 🎂",
+            "🌟 It's your special day! Make this year legendary! 🎈",
+            "🎊 Happy Birthday! Time to celebrate another trip around the sun! ☀️",
+            "🎁 Birthday wishes coming true! Make this year unforgettable! ✨"
+        ];
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            startQuoteRotation();
+            
+            // Enable/disable submit button based on inputs
+            const userName = document.getElementById('userName');
+            const birthdate = document.getElementById('birthdate');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            function checkInputs() {
+                submitBtn.disabled = !userName.value.trim() || !birthdate.value;
+            }
+            
+            userName.addEventListener('input', checkInputs);
+            birthdate.addEventListener('input', checkInputs);
+            
+            checkInputs(); // Initial check
+        });
+
+        function startQuoteRotation() {
+            quoteInterval = setInterval(() => {
+                currentQuoteIndex = (currentQuoteIndex + 1) % lifeQuotes.length;
+                const quoteElement = document.getElementById('rotatingQuote') || document.getElementById('resultsQuote');
+                if (quoteElement) {
+                    quoteElement.textContent = lifeQuotes[currentQuoteIndex];
+                }
+            }, 3000);
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000000) return `${(num / 1000000000).toFixed(1)}B`;
+            if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+            if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
+            return num.toString();
+        }
+
+        function getLifePhase(percentage) {
+            if (percentage < 20) return { phase: "🌱 Growing", color: "color-green" };
+            if (percentage < 40) return { phase: "🚀 Building", color: "color-blue" };
+            if (percentage < 60) return { phase: "💪 Peak", color: "color-purple" };
+            if (percentage < 80) return { phase: "🎯 Mastering", color: "color-orange" };
+            return { phase: "🌅 Wisdom", color: "color-yellow" };
+        }
+
+        function calculateStats(date, name) {
+            const birthDate = new Date(date);
+            const today = new Date();
+            
+            // Check if today is birthday
+            const isTodayBirthday = (
+                birthDate.getMonth() === today.getMonth() &&
+                birthDate.getDate() === today.getDate()
+            );
+            
+            // Calculate time lived
+            const msInWeek = 1000 * 60 * 60 * 24 * 7;
+            const msInDay = 1000 * 60 * 60 * 24;
+            const weeksLived = Math.floor((today - birthDate) / msInWeek);
+            const daysLived = Math.floor((today - birthDate) / msInDay);
+            
+            // Life assumptions (80 years = 4160 weeks)
+            const totalWeeks = 4160;
+            const weeksRemaining = totalWeeks - weeksLived;
+            const percentageLived = Math.round((weeksLived / totalWeeks) * 100);
+            
+            // Fun life calculations
+            const heartbeats = Math.floor(daysLived * 24 * 60 * 70);
+            const breaths = Math.floor(daysLived * 24 * 60 * 16);
+            const blinks = Math.floor(daysLived * 15000);
+            const steps = Math.floor(daysLived * 7500);
+            const words = Math.floor(daysLived * 16000);
+            const laughs = Math.floor(daysLived * 15);
+            const meals = Math.floor(daysLived * 3);
+            const sleepHours = Math.floor(daysLived * 8);
+            const phoneHours = Math.floor(daysLived * 3.5);
+            const hugs = Math.floor(daysLived * 2);
+            
+            return {
+                name,
+                weeksLived,
+                weeksRemaining,
+                daysLived,
+                percentageLived,
+                heartbeats,
+                breaths,
+                blinks,
+                steps,
+                words,
+                laughs,
+                meals,
+                sleepHours,
+                phoneHours,
+                hugs,
+                isTodayBirthday
+            };
+        }
+
+        function calculateLifeStats() {
+            const userName = document.getElementById('userName').value.trim();
+            const birthdate = document.getElementById('birthdate').value;
+            
+            if (!userName || !birthdate) {
+                alert('Please fill in both your name and birthdate!');
+                return;
+            }
+            
+            const stats = calculateStats(birthdate, userName);
+            displayResults(stats);
+        }
+
+        function displayResults(stats) {
+            // Hide input step, show results
+            document.getElementById('inputStep').classList.add('hidden');
+            document.getElementById('resultsStep').classList.remove('hidden');
+            document.getElementById('resultsStep').classList.add('fade-in');
+            
+            // Update greeting
+            document.getElementById('greetingTitle').textContent = `Hello, ${stats.name}!`;
+            
+            // Handle birthday
+            if (stats.isTodayBirthday) {
+                const birthdayAlert = document.getElementById('birthdayAlert');
+                const randomMessage = birthdayMessages[Math.floor(Math.random() * birthdayMessages.length)];
+                document.getElementById('birthdayMessage').textContent = randomMessage;
+                document.getElementById('birthdayDesc').textContent = `${stats.name}, today marks another amazing year of your journey! 🌟`;
+                birthdayAlert.classList.remove('hidden');
+            }
+            
+            // Update progress
+            const lifePhase = getLifePhase(stats.percentageLived);
+            document.getElementById('progressPercentage').textContent = `${stats.percentageLived}% Complete`;
+            document.getElementById('progressPercentage').className = `progress-percentage ${lifePhase.color}`;
+            document.getElementById('lifePhase').textContent = lifePhase.phase;
+            document.getElementById('progressBar').style.width = `${stats.percentageLived}%`;
+            document.getElementById('weeksRemaining').textContent = `${formatNumber(stats.weeksRemaining)} weeks left`;
+            
+            // Create life grid
+            createLifeGrid(stats);
+            
+            // Create stats grid
+            createStatsGrid(stats);
+            
+            // Update reality check
+            document.getElementById('phoneHours').textContent = formatNumber(stats.phoneHours);
+            
+            // Update motivation
+            document.getElementById('motivationTitle').textContent = `Your Mission, ${stats.name}`;
+            document.getElementById('motivationText').textContent = 
+                `Every day is a gift. Every moment is a choice. What will you do with your remaining ${formatNumber(stats.weeksRemaining)} weeks?`;
+        }
+
+        function createLifeGrid(stats) {
+            const gridContainer = document.getElementById('lifeGrid');
+            gridContainer.innerHTML = '';
+            
+            const weeksPerRow = 52;
+            const totalRows = 80; // 80 years
+            
+            for (let row = 0; row < totalRows; row++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'grid-row';
+                
+                for (let col = 0; col < weeksPerRow; col++) {
+                    const weekNumber = row * weeksPerRow + col;
+                    const weekDot = document.createElement('div');
+                    weekDot.className = 'week-dot';
+                    
+                    if (weekNumber < stats.weeksLived) {
+                        weekDot.classList.add('past');
+                    } else if (weekNumber === stats.weeksLived) {
+                        weekDot.classList.add('current');
+                    } else {
+                        weekDot.classList.add('future');
+                    }
+                    
+                    rowDiv.appendChild(weekDot);
+                }
+                
+                gridContainer.appendChild(rowDiv);
+            }
+        }
+
+        function createStatsGrid(stats) {
+            const statsGrid = document.getElementById('statsGrid');
+            
+            const statsData = [
+                { emoji: '💓', title: 'Heartbeats', value: stats.heartbeats, subtitle: 'Still beating strong!', color: 'color-red' },
+                { emoji: '👀', title: 'Blinks', value: stats.blinks, subtitle: 'Eyes on the prize', color: 'color-blue' },
+                { emoji: '🚶‍♂️', title: 'Steps Taken', value: stats.steps, subtitle: 'Keep moving forward', color: 'color-green' },
+                { emoji: '😂', title: 'Times Laughed', value: stats.laughs, subtitle: 'Laughter is medicine', color: 'color-yellow' },
+                { emoji: '💬', title: 'Words Spoken', value: stats.words, subtitle: 'Stories shared', color: 'color-purple' },
+                { emoji: '🤗', title: 'Hugs Given', value: stats.hugs, subtitle: 'Love multiplied', color: 'color-pink' }
+            ];
+            
+            statsGrid.innerHTML = '';
+            
+            statsData.forEach(stat => {
+                const statCard = document.createElement('div');
+                statCard.className = 'stat-card';
+                statCard.innerHTML = `
+                    <div class="stat-emoji">${stat.emoji}</div>
+                    <div class="stat-title">${stat.title}</div>
+                    <div class="stat-value ${stat.color}">${formatNumber(stat.value)}</div>
+                    <div class="stat-subtitle">${stat.subtitle}</div>
+                `;
+                statsGrid.appendChild(statCard);
+            });
+        }
+
+        function resetApp() {
+            // Clear inputs
+            document.getElementById('userName').value = '';
+            document.getElementById('birthdate').value = '';
+            
+            // Hide results, show input
+            document.getElementById('resultsStep').classList.add('hidden');
+            document.getElementById('inputStep').classList.remove('hidden');
+            document.getElementById('inputStep').classList.add('fade-in');
+            
+            // Hide birthday alert
+            document.getElementById('birthdayAlert').classList.add('hidden');
+            
+            // Reset quote rotation
+            clearInterval(quoteInterval);
+            currentQuoteIndex = 0;
+            document.getElementById('rotatingQuote').textContent = lifeQuotes[0];
+            startQuoteRotation();
+        }
+    </script>
+</body>
+</html>
