@@ -388,7 +388,7 @@
             margin-top: 0.5rem;
         }
 
-        .reset-btn {
+        .reset-btn, .compare-btn {
             width: 100%;
             background: white;
             color: #1f2937;
@@ -402,8 +402,159 @@
             margin-bottom: 1rem;
         }
 
-        .reset-btn:hover {
+        .compare-btn {
+            background: linear-gradient(to right, #3b82f6, #8b5cf6);
+            color: white;
+        }
+
+        .compare-btn:hover, .reset-btn:hover {
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Comparison System Styles */
+        .comparison-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .comparison-content {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .comparison-result {
+            margin-top: 2rem;
+        }
+
+        .vs-section {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .person-stats {
+            text-align: center;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 1rem;
+        }
+
+        .person-name {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .person-progress {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .person-phase {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .person-weeks {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .vs-divider {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ef4444;
+        }
+
+        .winner-indicator {
+            background: linear-gradient(to right, #fef3c7, #fed7aa);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #92400e;
+            margin-top: 0.5rem;
+        }
+
+        .comparison-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .comparison-stat {
+            text-align: center;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 1rem;
+        }
+
+        .stat-comparison {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .jealousy-triggers {
+            background: linear-gradient(to right, #fecaca, #fed7aa);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .trigger-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #dc2626;
+            margin-bottom: 1rem;
+        }
+
+        .trigger-item {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+            color: #7f1d1d;
+            font-weight: 500;
+        }
+
+        .trigger-item:last-child {
+            margin-bottom: 0;
         }
 
         .hidden {
@@ -417,6 +568,11 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        .emoji-medium {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
         }
     </style>
 </head>
@@ -437,7 +593,7 @@
                     <p class="input-desc">Let's see what you've accomplished</p>
                     
                     <input type="text" class="input-field" id="userName" placeholder="Your name" required>
-                    <input type="date" class="input-field" id="birthdate" required>
+                    <input type="date" class="input-field" id="birthdate" min="1800-01-01" max="2025-12-31" required>
                     
                     <button class="submit-btn" id="submitBtn" onclick="calculateLifeStats()">
                         Show My Life Stats ✨
@@ -450,7 +606,7 @@
             </div>
         </div>
 
-        <!-- Step 2:  Results -->
+        <!-- Step 2: Results -->
         <div id="resultsStep" class="hidden">
             <!-- Header -->
             <div class="header">
@@ -508,7 +664,7 @@
                 </div>
             </div>
 
-            <!-- Fun Stats  Grid -->
+            <!-- Fun Stats Grid -->
             <div class="stats-grid" id="statsGrid"></div>
 
             <!-- Reality Check -->
@@ -532,6 +688,11 @@
                 <p class="motivation-subtitle">Time for your second life begins now! 🚀</p>
             </div>
 
+            <!-- Compare with Friend Button -->
+            <button class="compare-btn" onclick="openComparisonModal()">
+                Compare with Friend 🔥
+            </button>
+
             <!-- Reset Button -->
             <button class="reset-btn" onclick="resetApp()">Start Over 🔄</button>
 
@@ -540,12 +701,39 @@
                 <p>Developed by <span class="name">Alwin Madhu</span></p>
             </div>
         </div>
+
+        <!-- Comparison Modal -->
+        <div id="comparisonModal" class="comparison-modal hidden">
+            <div class="comparison-content">
+                <button class="close-btn" onclick="closeComparisonModal()">&times;</button>
+                
+                <div id="comparisonInput">
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <div class="emoji-large">⚔️</div>
+                        <h2 class="input-title">Compare with Your Friend</h2>
+                        <p class="input-desc">Let's see who's winning at life! 😈</p>
+                    </div>
+                    
+                    <input type="text" class="input-field" id="friendName" placeholder="Friend's name" required>
+                    <input type="date" class="input-field" id="friendBirthdate" min="1800-01-01" max="2025-12-31" required>
+                    
+                    <button class="submit-btn" onclick="compareWithFriend()">
+                        Battle! ⚡
+                    </button>
+                </div>
+
+                <div id="comparisonResults" class="hidden">
+                    <!-- Results will be populated here -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         // Global variables
         let currentQuoteIndex = 0;
         let quoteInterval;
+        let userStats = null;
         
         const lifeQuotes = [
             "Your life is happening NOW ⚡",
@@ -566,7 +754,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             startQuoteRotation();
             
-            // Enable/disable submit button based on inputs
             const userName = document.getElementById('userName');
             const birthdate = document.getElementById('birthdate');
             const submitBtn = document.getElementById('submitBtn');
@@ -578,7 +765,7 @@
             userName.addEventListener('input', checkInputs);
             birthdate.addEventListener('input', checkInputs);
             
-            checkInputs(); // Initial check
+            checkInputs();
         });
 
         function startQuoteRotation() {
@@ -610,6 +797,12 @@
             const birthDate = new Date(date);
             const today = new Date();
             
+            // Validate date
+            if (birthDate > today) {
+                alert('Birth date cannot be in the future!');
+                return null;
+            }
+            
             // Check if today is birthday
             const isTodayBirthday = (
                 birthDate.getMonth() === today.getMonth() &&
@@ -621,11 +814,12 @@
             const msInDay = 1000 * 60 * 60 * 24;
             const weeksLived = Math.floor((today - birthDate) / msInWeek);
             const daysLived = Math.floor((today - birthDate) / msInDay);
+            const ageInYears = Math.floor((today - birthDate) / (1000 * 60 * 60 * 24 * 365.25));
             
             // Life assumptions (80 years = 4160 weeks)
             const totalWeeks = 4160;
-            const weeksRemaining = totalWeeks - weeksLived;
-            const percentageLived = Math.round((weeksLived / totalWeeks) * 100);
+            const weeksRemaining = Math.max(0, totalWeeks - weeksLived);
+            const percentageLived = Math.min(100, Math.round((weeksLived / totalWeeks) * 100));
             
             // Fun life calculations
             const heartbeats = Math.floor(daysLived * 24 * 60 * 70);
@@ -644,6 +838,7 @@
                 weeksLived,
                 weeksRemaining,
                 daysLived,
+                ageInYears,
                 percentageLived,
                 heartbeats,
                 breaths,
@@ -655,7 +850,8 @@
                 sleepHours,
                 phoneHours,
                 hugs,
-                isTodayBirthday
+                isTodayBirthday,
+                birthDate
             };
         }
 
@@ -668,8 +864,10 @@
                 return;
             }
             
-            const stats = calculateStats(birthdate, userName);
-            displayResults(stats);
+            userStats = calculateStats(birthdate, userName);
+            if (userStats) {
+                displayResults(userStats);
+            }
         }
 
         function displayResults(stats) {
@@ -695,103 +893,4 @@
             document.getElementById('progressPercentage').textContent = `${stats.percentageLived}% Complete`;
             document.getElementById('progressPercentage').className = `progress-percentage ${lifePhase.color}`;
             document.getElementById('lifePhase').textContent = lifePhase.phase;
-            document.getElementById('progressBar').style.width = `${stats.percentageLived}%`;
-            document.getElementById('weeksRemaining').textContent = `${formatNumber(stats.weeksRemaining)} weeks left`;
-            
-            // Create life grid
-            createLifeGrid(stats);
-            
-            // Create stats grid
-            createStatsGrid(stats);
-            
-            // Update reality check
-            document.getElementById('phoneHours').textContent = formatNumber(stats.phoneHours);
-            
-            // Update motivation
-            document.getElementById('motivationTitle').textContent = `Your Mission, ${stats.name}`;
-            document.getElementById('motivationText').textContent = 
-                `Every day is a gift. Every moment is a choice. What will you do with your remaining ${formatNumber(stats.weeksRemaining)} weeks?`;
-        }
-
-        function createLifeGrid(stats) {
-            const gridContainer = document.getElementById('lifeGrid');
-            gridContainer.innerHTML = '';
-            
-            const weeksPerRow = 52;
-            const totalRows = 80; // 80 years
-            
-            for (let row = 0; row < totalRows; row++) {
-                const rowDiv = document.createElement('div');
-                rowDiv.className = 'grid-row';
-                
-                for (let col = 0; col < weeksPerRow; col++) {
-                    const weekNumber = row * weeksPerRow + col;
-                    const weekDot = document.createElement('div');
-                    weekDot.className = 'week-dot';
-                    
-                    if (weekNumber < stats.weeksLived) {
-                        weekDot.classList.add('past');
-                    } else if (weekNumber === stats.weeksLived) {
-                        weekDot.classList.add('current');
-                    } else {
-                        weekDot.classList.add('future');
-                    }
-                    
-                    rowDiv.appendChild(weekDot);
-                }
-                
-                gridContainer.appendChild(rowDiv);
-            }
-        }
-
-        function createStatsGrid(stats) {
-            const statsGrid = document.getElementById('statsGrid');
-            
-            const statsData = [
-                { emoji: '💓', title: 'Heartbeats', value: stats.heartbeats, subtitle: 'Still beating strong!', color: 'color-red' },
-                { emoji: '👀', title: 'Blinks', value: stats.blinks, subtitle: 'Eyes on the prize', color: 'color-blue' },
-                { emoji: '🚶‍♂️', title: 'Steps Taken', value: stats.steps, subtitle: 'Keep moving forward', color: 'color-green' },
-                { emoji: '😂', title: 'Times Laughed', value: stats.laughs, subtitle: 'Laughter is medicine', color: 'color-yellow' },
-                { emoji: '💬', title: 'Words Spoken', value: stats.words, subtitle: 'Stories shared', color: 'color-purple' },
-                { emoji: '🤗', title: 'Hugs Given', value: stats.hugs, subtitle: 'Love multiplied', color: 'color-pink' }
-            ];
-            
-            statsGrid.innerHTML = '';
-            
-            statsData.forEach(stat => {
-                const statCard = document.createElement('div');
-                statCard.className = 'stat-card';
-                statCard.innerHTML = `
-                    <div class="stat-emoji">${stat.emoji}</div>
-                    <div class="stat-title">${stat.title}</div>
-                    <div class="stat-value ${stat.color}">${formatNumber(stat.value)}</div>
-                    <div class="stat-subtitle">${stat.subtitle}</div>
-                `;
-                statsGrid.appendChild(statCard);
-            });
-        }
-
-        function resetApp() {
-            // Clear inputs
-            document.getElementById('userName').value = '';
-            document.getElementById('birthdate').value = '';
-            
-            // Hide results, show input
-            document.getElementById('resultsStep').classList.add('hidden');
-            document.getElementById('inputStep').classList.remove('hidden');
-            document.getElementById('inputStep').classList.add('fade-in');
-            
-            // Hide birthday alert
-            document.getElementById('birthdayAlert').classList.add('hidden');
-            
-            // Reset quote rotation
-            clearInterval(quoteInterval);
-            currentQuoteIndex = 0;
-            document.getElementById('rotatingQuote').textContent = lifeQuotes[0];
-            startQuoteRotation();
-        }
-    </script>
-</body>
-
-</html>
-
+            document.getElementById('progressBar').style.width = `${stats.percentageLive
